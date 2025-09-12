@@ -1,0 +1,13 @@
+# Blender v2.81 (sub 16) OBJ File: ''
+# www.blender.org
+mtllib female electric plug nut.mtl
+o female_electric_plug_nut
+v -0.006809 0.000035 -0.000003
+v -0.006809 -0.000035 0.000003
+v 0.006809 -0.000035 0.000003
+v 0.006809 0.000035 -0.000003
+vn 0.0000 0.0791 0.9969
+usemtl material_0.077
+s 1
+f 1//1 2//1 3//1
+f 1//1 3//1 4//1

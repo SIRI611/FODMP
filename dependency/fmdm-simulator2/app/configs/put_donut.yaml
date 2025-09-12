@@ -1,0 +1,135 @@
+simulation:
+  sim-mode: gpu-gui # gpu-gui cpu-headless
+  ml-mode: training # testing # unused but needed for the base env
+  render-mode: rgb_array # rgb_array human rgb_and_depth_arrays depth
+  enable-windows: True
+  gravity: 9.807
+  timestep: 0.001 # 1/240
+  number-of-sub-steps: 0
+  number-of-solver-iterations: 50
+  contact-erp: 0.2
+  default_view_cam:
+    distance: 1.86 #
+    yaw: -35.6
+    pitch: -50
+    target: [0.73, 0.23, -0.06]
+
+termination:
+  terminate-on-collision-with-slot:
+    enable: True
+  terminate-on-collision-with-table:
+    enable: True
+  terminate-after-successful-placements:
+    enable: True
+    placements-before-termination: 1
+  terminate-on-dropped-peg:
+    enabled: True
+    dropped-peg-timeout: 100
+
+cameras:
+- scale-depth-data: False  # this one is used to segmentate objects. top view image
+  eye-hand-configuration: eye_to_hand  # eye_in_hand
+  width-resolution: 640
+  height-resolution: 480
+  view-matrix:
+    eye-position: [0.7,0.0,1.5]
+    target-position: [0.69,0.00,0]
+    up-vector: [0,0,1]
+  projection-matrix:
+    fov: 75
+    near-plane: 0.008 # 0.1 also works
+    far-plane: 1.51
+- scale-depth-data: False  # topview camera
+  eye-hand-configuration: eye_to_hand  # eye_in_hand  # use this on
+  width-resolution: 128
+  height-resolution: 128
+  view-matrix:
+    eye-position: [0,0.5,1.5]
+    target-position: [0.5,-0.14,0.626]
+    up-vector: [0,0,1]
+  projection-matrix:
+    fov: 45
+    near-plane: 0.008 # 0.1 also works
+    far-plane: 2
+- scale-depth-data: False  # corner camera
+  eye-hand-configuration: eye_to_hand  # eye_in_hand
+  width-resolution: 128
+  height-resolution: 128
+  view-matrix:
+    eye-position: [-1.1, -0.4, 0.6]
+    target-position: [0.5,-0.14,0]
+    up-vector: [-0.6804138144587442, -0.680413820500869, 0.2721655267757353]
+  projection-matrix:
+    fov: 45
+    near-plane: 0.008 # 0.1 also works
+    far-plane: 2
+- scale-depth-data: False  # corner2 camera
+  eye-hand-configuration: eye_to_hand  # eye_in_hand
+  width-resolution: 128
+  height-resolution: 128
+  view-matrix:
+    eye-position: [ 1.3, -0.2,  1.1]
+    target-position: [0.5,-0.14,0.626]
+    up-vector: [0.7457052108497266, -0.45824210588374314, 0.4836712839385827]
+  projection-matrix:
+    fov: 60
+    near-plane: 0.008 # 0.1 also works
+    far-plane: 2
+
+robot:
+  robot-file: franka_panda/panda.urdf
+  clip-delta-actions-to-workspace: True
+  enable-gripper-force-readings: False
+  position: [0,0,0]
+  orientation: [0,0,0] # degrees euler
+  poses:
+    joint-0: 0.0977
+    joint-1: 0.2813
+    joint-2: -0.447
+    joint-3: -1.9132
+    joint-4: 0.1452
+    joint-5: 2.1634
+    joint-6: 2.9671
+    finger-0: 0.02
+    finger-1: 0.02
+  impedance:
+    inner-steps: 10 # The number of times velocity is updated per call
+    delay-steps: 1 # The number of times step_simulation is called per impeded velocity command,
+                   #    sets the internal control loop frequency
+    sigma: 0.0001 #[0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001] # The diagonal elements of the sigma matrix or a fixed value
+
+scene:
+  drop-containers:
+    geometry: ["plate", "bins"]
+    scale-factor: [[ 0.02,0.02,0.02 ],[5,5,5]]
+    dimensions: [[0.104,0.0649,0.079 ], [0.16, 0.16, 0.04]]
+    position: [[0.6,0.0,0.025],[0,0,0]]  # in world coordinate framework
+    orientation: [[90,0,0],[90,0,0]]  # in world coordinate framework
+  target-object:
+    geometry: [ "donut" ]  # clear out the first one
+    scale-factor: [ [ 0.00014, 0.00014, 0.00014 ] ]
+    collision-scale: [ [ 0.00014, 0.00014, 0.00014 ] ]
+    object-mass: [ 0.01 ]
+    num-of-objects: [ 1 ]
+    dimensions: [ [ 0.01, 0.01, 0.005 ] ]  # size of each object, used for scripted policy to do grasping.
+    position: [ [ 0,0,0.625 ] ]  # this position will generate random xyz
+    orientation: [ [ 90,0,0 ] ]  # in world coordinate framework
+  disruptive-objects:
+    geometry: [ "CoffeeCup" ]  # clear out the first one
+    scale-factor: [ [ 0.12,0.12,0.12 ] ]
+    collision-scale: [ [ 3.915, 5.49, 2.745 ] ]
+    object-mass: [ 0.06 ]
+    num-of-objects: [ 3 ]
+    dimensions: [ [ 0.1044, 0.1464, 0.1044 ] ]  # size of each object, used for scripted policy to do grasping.
+    position: [ [ 0,0,0.66 ] ]  # this position will generate random xyz
+    orientation: [ [ 90,0,0 ] ]  # in world coordinate framework
+  backgrounds:
+    geometry: ["mug", "spoon", "fork"] # [ "mug", "plate", "spoon", "fork" ]
+    scale-factor: [ [ 0.001,0.001,0.001 ], [ 0.05,0.05,0.05 ],   [ 0.005,0.005,0.005 ]]
+    object-mass: [ 0.1,0.1,0.1]
+    colors: [[0.2,0.274,0.388,1],  [0.34,0.34,0.34,0],[0.57, 0.62, 0.63, 0] ]
+    dimensions: [ [0.104,0.0649,0.079 ], [ 0.186,0.0219,0.186 ], [ 0.186,0.0219,0.186 ] ]  # size of each object, used for scripted policy to do grasping.
+    position: [ [ 0.8, -0.45,0.055 ],   [ 1.2,-0.6,0.075 ], [ 1.3,-0.6,0.075 ] ]  # this position will generate random xyz
+    orientation: [ [ 90,0,120 ] ,    [ 90,0,0 ],  [ 0,0,0 ] ]  # in world coordinate framework
+
+

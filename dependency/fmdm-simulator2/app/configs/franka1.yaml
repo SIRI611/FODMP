@@ -1,0 +1,70 @@
+simulation:
+  sim-mode: gpu-headless # gpu-gui cpu-headless
+  ml-mode: training # testing
+  render-mode: rgb_array # human rgb_and_depth_arrays
+  enable-windows: False
+  gravity: 9.807
+  timestep: 0.001 # 0.25*(1/240)
+  number-of-sub-steps: 2
+  number-of-solver-iterations: 50
+  contact-erp: 0.2
+
+termination:
+  terminate-on-collision-with-bin:
+    enable: True
+  terminate-after-successful-grabs:
+    enable: True
+    ensure-grab-is-stable: True
+    grabs-before-termination: 1
+
+camera:
+  scale-depth-data: False
+  width-resolution: 480
+  height-resolution: 480
+  view-matrix:
+    eye-position: [0,0,0.25]
+    target-position: [0,0,0]
+    up-vector: [0,1,0]
+  projection-matrix:
+    fov: 76
+    near-plane: 0.008 # 0.1 also works
+    far-plane: 0.16
+
+robot:
+  robot-file: franka_panda/panda.urdf
+  clip-delta-actions-to-workspace: True
+  enable-gripper-force-readings: False
+  position: [-0.6,0,0]
+  orientation: [0,0,0] # degrees euler
+  poses:
+    joint-0: 0
+    joint-1: 0.15
+    joint-2: 0
+    joint-3: -1.65
+    joint-4: 0
+    joint-5: 1.85
+    joint-6: 2.32
+    finger-0: 0.02
+    finger-1: 0.02
+
+scene:
+  steps-for-objects-to-fall: 400
+  drop-bin-enable: True
+  bin:
+    bin-file: bin0.obj
+    scale-factor: [1,1,1]
+    dimensions: [0.16, 0.16, 0.04]
+    position: [0,0,0.1]  # in world coordinate framework
+    orientation: [90,0,0]  # in world coordinate framework
+    objects:
+      load-random-obj-file: False
+      obj-file-to-load: SOD-80C.obj
+      scale-factor: [1,1,1]
+      min-number-of-objects: 20
+      max-number-of-objects: 40
+  drop-bin:
+    bin-file: bin0.obj
+    scale-factor: [1,1,1]
+    dimensions: [0.16, 0.16, 0.04]
+    position: [0,-0.4,0.1]
+    orientation: [90,0,0]
