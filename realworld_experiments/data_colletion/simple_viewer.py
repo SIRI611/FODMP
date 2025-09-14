@@ -1,51 +1,54 @@
 #!/usr/bin/env python3
 import socket, struct
-import cv2
-import numpy as np
+import cv2, numpy as np
 
-SERVER_IP = "10.1.38.22"   # Camera PC IP
+SERVER_IP = "10.1.38.22"   # Camera PC
 SERVER_PORT = 5001
+HEADER_FMT = ">IQ"         # 4B length, 8B camera timestamp (ns)
 
 def recv_all(sock, n):
-    data = bytearray(n)
-    view = memoryview(data)
+    buf = bytearray(n); view = memoryview(buf)
     while n:
-        r = sock.recv(n)
-        if not r:
+        chunk = sock.recv(n)
+        if not chunk:
             return None
-        view[:len(r)] = r
-        view = view[len(r):]
-        n -= len(r)
-    return data
+        view[:len(chunk)] = chunk
+        view = view[len(chunk):]
+        n -= len(chunk)
+    return bytes(buf)
 
 def main():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((SERVER_IP, SERVER_PORT))
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((SERVER_IP, SERVER_PORT))
     print(f"[Client] Connected to {SERVER_IP}:{SERVER_PORT}")
+
+    hdr_size = struct.calcsize(HEADER_FMT)
 
     try:
         while True:
-            # Read 4-byte length
-            header = recv_all(sock, 4)
-            if header is None:
-                print("[Client] Disconnected")
+            hdr = recv_all(s, hdr_size)
+            if hdr is None:
+                print("[Client] Disconnected.")
                 break
-            (length,) = struct.unpack(">I", header)
-            # Read JPEG
-            jpg = recv_all(sock, length)
+
+            length, t_cam_ns = struct.unpack(HEADER_FMT, hdr)
+            jpg = recv_all(s, length)
             if jpg is None:
-                print("[Client] Disconnected")
+                print("[Client] Disconnected.")
                 break
 
             img = cv2.imdecode(np.frombuffer(jpg, np.uint8), cv2.IMREAD_COLOR)
             if img is None:
+                print("[Client] decode failed")
                 continue
 
-            cv2.imshow("Stream", img)
+            cv2.putText(img, f"t_cam_ns={t_cam_ns}", (8,24),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2)
+            cv2.imshow("Stream (timestamped)", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
     finally:
-        sock.close()
+        s.close()
         cv2.destroyAllWindows()
 
 if __name__ == "__main__":

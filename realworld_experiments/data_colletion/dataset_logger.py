@@ -123,7 +123,7 @@ def main():
     f = open(args.csv, "w", newline=""); w = csv.writer(f)
     w.writerow([
         "t_cam_ns","t_recv_ns","frame_id","cx","cy","vx","vy","conf",
-        "x","y","z","roll","pitch","yaw","gripper"
+        "x","y","z","roll","pitch","yaw","gripper", "cartesian_v", "joint_v"
     ]); f.flush()
 
     prev = None  # (t_cam_ns, cx, cy)
@@ -168,11 +168,12 @@ def main():
             match = state_buf.get_nearest(t_cam_ns, max_dt_ns)
             if match is not None:
                 _, st = match
-                x, y, z, r, p, yw, g = st
+                x, y, z, r, p, yw, g, cartesian_v, joint_v = st
             else:
                 x = y = z = r = p = yw = g = float("nan")
+                cartesian_v = joint_v = float("nan")
 
-            w.writerow([t_cam_ns, t_recv_ns, frame_id, cx, cy, vx, vy, conf, x, y, z, r, p, yw, g])
+            w.writerow([t_cam_ns, t_recv_ns, frame_id, cx, cy, vx, vy, conf, x, y, z, r, p, yw, g, cartesian_v, joint_v])
             f.flush()
 
             if args.show:

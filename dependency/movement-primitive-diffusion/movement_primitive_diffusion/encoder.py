@@ -73,3 +73,14 @@ class Encoder(torch.nn.Module):
         encoding = self.aggregator(network_outputs)
 
         return encoding
+
+class Encoder_StateOnly(torch.nn.Module):
+    def __init__(
+        self,
+        state_size: int,
+    ) -> None:
+        super().__init__()
+        self.output_size = state_size
+
+    def __call__(self, observation: Dict[str, torch.Tensor]) -> torch.Tensor:
+        return observation["state"]

@@ -13,7 +13,7 @@ MODEL_PATH = "yolo11n.pt"
 IMGSZ = 320
 CONF = 0.25
 DEVICE = "cuda:0"   # or None / "cpu"
-
+HEADER_FMT = ">IQ" 
 def recv_all(sock, n):
     data = bytearray(n)
     view = memoryview(data)
@@ -31,7 +31,7 @@ def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((SERVER_IP, SERVER_PORT))
     print(f"[Client] Connected to {SERVER_IP}:{SERVER_PORT}")
-
+    hdr_size = struct.calcsize(HEADER_FMT)
     # Load YOLO
     model = YOLO(MODEL_PATH)
     try:
@@ -49,11 +49,11 @@ def main():
     frames, t0 = 0, time.time()
     try:
         while True:
-            header = recv_all(sock, 4)
+            header = recv_all(sock, hdr_size)
             if header is None:
                 print("[Client] Disconnected")
                 break
-            (length,) = struct.unpack(">I", header)
+            (length, t_cam_ns) = struct.unpack(HEADER_FMT, header)
             jpg = recv_all(sock, length)
             if jpg is None:
                 print("[Client] Disconnected")
