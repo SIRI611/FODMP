@@ -1,0 +1,76 @@
+simulation:
+  sim-mode: gpu-gui # gpu-headless cpu-headless
+  ml-mode: training # testing # unused but needed for the base env
+  render-mode: rgb_array # human rgb_and_depth_arrays
+  enable-windows: True
+  gravity: 9.807
+  timestep: 0.001 # 1/240
+  number-of-sub-steps: 0
+  number-of-solver-iterations: 50
+  contact-erp: 0.2
+  default_view_cam:
+    distance: 1.2 #
+    yaw: 28.4
+    pitch: -39.8
+    target: [-0.104, 0.205, 0.34]
+
+termination:
+  terminate-on-collision-with-slot:
+    enable: True
+  terminate-on-collision-with-table:
+    enable: True
+  terminate-after-successful-placements:
+    enable: True
+    placements-before-termination: 1
+  terminate-on-dropped-peg:
+    enabled: True
+    dropped-peg-timeout: 100
+
+cameras:
+- scale-depth-data: False
+  eye-hand-configuration: eye_in_hand  # eye_to_hand
+  width-resolution: 120
+  height-resolution: 120
+  view-matrix:
+    eye-position: [0.2,0.2,0.45]
+    target-position: [0,0,0.3]
+    up-vector: [0,0,1]
+  projection-matrix:
+    fov: 35
+    near-plane: 0.01
+    far-plane: 0.5
+    
+
+  
+
+robot:
+  robot-file: franka_panda/panda.urdf
+  clip-delta-actions-to-workspace: True
+  enable-gripper-force-readings: False
+  position: [-0.6,0,0.625]
+  orientation: [0,0,0] # degrees euler
+  poses:
+    joint-0: 0
+    joint-1: 0.15
+    joint-2: 0
+    joint-3: -1.65
+    joint-4: 0
+    joint-5: 1.85
+    joint-6: 2.32
+    finger-0: 0.02
+    finger-1: 0.02
+
+scene:
+  steps-for-objects-to-fall: 400
+  peg-slot:
+    geometry: cylinder # cube cylinder square cylinder_short
+    scale-factor: [1,1,1]
+    slot:
+      dimensions: [0.05, 0.05, 0.03]
+      position: [0,0,0.625]  # in world coordinate framework
+      orientation: [0,0,0]  # in world coordinate framework
+    peg:
+      dimensions: [0.02, 0.02, "0.02 or 0.04"]
+      spawn-in-hand: True
+      position: [0,0,0.3]
+      orientation: [0,0,0]
