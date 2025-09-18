@@ -8,13 +8,16 @@ PORT = 5001
 WIDTH, HEIGHT, FPS = 1280, 720, 30
 JPEG_QUALITY = 80
 
-# Header: 4B big-endian length, 8B big-endian camera timestamp (ns)
-HEADER_FMT = ">IQ"  # (length:int32, t_cam_ns:uint64)
+# Header formats
+HEADER_RGB_FMT = ">IQ"     # RGB only: (length:int32, t_cam_ns:uint64)
+HEADER_RGBD_FMT = ">IQI"   # RGB+Depth: (rgb_length:int32, t_cam_ns:uint64, depth_length:int32)
 
-def start_realsense(width=640, height=480, fps=30):
+def start_realsense(width=WIDTH, height=HEIGHT, fps=30, enable_depth=True):
     pipe = rs.pipeline()
     cfg = rs.config()
     cfg.enable_stream(rs.stream.color, width, height, rs.format.bgr8, fps)
+    if enable_depth:
+        cfg.enable_stream(rs.stream.depth, width, height, rs.format.z16, fps)
     prof = pipe.start(cfg)
     return pipe
 
@@ -25,8 +28,14 @@ def send_all(s, b):
         mv = mv[n:]
 
 def main():
-    pipe = start_realsense(WIDTH, HEIGHT, FPS)
-    print(f"[Camera] RealSense {WIDTH}x{HEIGHT}@{FPS}")
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--enable-depth", action="store_true", help="Send depth data alongside RGB")
+    args = ap.parse_args()
+    
+    pipe = start_realsense(WIDTH, HEIGHT, FPS, enable_depth=args.enable_depth)
+    stream_type = "RGB+Depth" if args.enable_depth else "RGB only"
+    print(f"[Camera] RealSense {WIDTH}x{HEIGHT}@{FPS} ({stream_type})")
     print(f"[Camera] Listening on {HOST}:{PORT}")
 
     srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,23 +51,50 @@ def main():
             frames = 0
             try:
                 while True:
+                    print("[Server] Waiting for frames...")
                     frameset = pipe.wait_for_frames()
+                    print("[Server] Got frameset")
                     c = frameset.get_color_frame()
                     if not c:
+                        print("[Server] No color frame, continuing...")
                         continue
+                    print("[Server] Got color frame")
 
                     # Timestamp as close to capture as possible
                     t_cam_ns = time.time_ns()
 
+                    # RGB data
                     frame = np.asanyarray(c.get_data())  # BGR
                     ok, jpg = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), JPEG_QUALITY])
                     if not ok:
                         continue
-                    payload = jpg.tobytes()
+                    rgb_payload = jpg.tobytes()
 
-                    header = struct.pack(HEADER_FMT, len(payload), t_cam_ns)
-                    send_all(conn, header)
-                    send_all(conn, payload)
+                    if args.enable_depth:
+                        # Depth data
+                        d = frameset.get_depth_frame()
+                        if d:
+                            print('[Server] Got depth frame')
+                            depth_frame = np.asanyarray(d.get_data(), dtype=np.uint16)  # 16-bit depth in mm
+                            depth_payload = depth_frame.tobytes()
+                            
+                            # Send RGB+Depth header and data
+                            header = struct.pack(HEADER_RGBD_FMT, len(rgb_payload), t_cam_ns, len(depth_payload))
+                            send_all(conn, header)
+                            send_all(conn, rgb_payload)
+                            send_all(conn, depth_payload)
+                        else:
+                            # Fallback to RGB only if no depth
+                            header = struct.pack(HEADER_RGB_FMT, len(rgb_payload), t_cam_ns)
+                            send_all(conn, header)
+                            send_all(conn, rgb_payload)
+                    else:
+                        # RGB only
+                        header = struct.pack(HEADER_RGB_FMT, len(rgb_payload), t_cam_ns)
+                        print(f"[Server] Sending RGB frame: {len(rgb_payload)} bytes")
+                        send_all(conn, header)
+                        send_all(conn, rgb_payload)
+                        print(f"[Server] Sent RGB frame")
 
                     frames += 1
                     if frames % 60 == 0:

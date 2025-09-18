@@ -24,7 +24,7 @@ import cv2
 import numpy as np
 
 COORDS_FMT = "<iiiI"   # cx, cy, score*1000, t_ms
-HEADER_FMT = ">IQ"     # (length:int32, t_cam_ns:uint64)
+HEADER_FMT = ">IQI"     # (length:int32, t_cam_ns:uint64)
 # --------------------------
 # Helpers
 # --------------------------
@@ -170,7 +170,7 @@ def main():
             # Frame
             hdr = recv_all(sock, hdr_size)
             if hdr is None: print("[Client] Stream disconnected."); break
-            (length, t_cam_ns) = struct.unpack(HEADER_FMT, hdr)
+            length = struct.unpack(HEADER_FMT, hdr)
             jpg = recv_all(sock, length)
             if jpg is None: print("[Client] Stream disconnected."); break
             img = cv2.imdecode(np.frombuffer(jpg, np.uint8), cv2.IMREAD_COLOR)

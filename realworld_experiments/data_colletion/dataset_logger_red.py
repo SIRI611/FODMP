@@ -18,7 +18,7 @@ import cv2, numpy as np
 
 STATE_FMT = "<7d"
 STATE_SIZE = struct.calcsize(STATE_FMT)
-HEADER_FMT = ">IQ"  # (length:int32, t_cam_ns:uint64)
+HEADER_FMT = ">IQI"  # (length:int32, t_cam_ns:uint64, t_recv_ns:uint64)
 
 # ---------------- HSV red ball detector ----------------
 def detect_red_ball(

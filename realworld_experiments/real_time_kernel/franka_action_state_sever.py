@@ -250,9 +250,11 @@ def main():
     parser.add_argument("--ip", type=str, default=DEFAULT_LISTEN_IP, help="Listen IP for actions (default: 0.0.0.0)")
     parser.add_argument("--port", type=int, default=DEFAULT_LISTEN_PORT, help="Listen port for actions (default: 9090)")
     parser.add_argument("--quiet", action="store_true", help="Only print errors")
-    parser.add_argument("--no-init-move", action="store_true", help="Skip initial absolute move")
-    parser.add_argument("--telemetry", type=str, choices=["basic", "full"], default="basic",
+    parser.add_argument("--no-init-move", type=bool, help="Skip initial absolute move", default=True)
+    parser.add_argument("--telemetry", type=str, choices=["basic", "full"], default="full",
                         help="Telemetry packet: 'basic'(7d) or 'full'(27d)")
+    parser.add_argument("--receive-action", type=bool, default=False,
+                        help="Receive action commands (default: False)")
     args = parser.parse_args()
 
     # Connect robot & gripper
@@ -306,7 +308,7 @@ def main():
             except socket.timeout:
                 pass
 
-            if data:
+            if data and args.receive_action:
                 if len(data) >= ACT_BYTES:
                     dx, dy, dz, droll, dpitch, dyaw, grip_cmd = struct.unpack(FMT_ACT, data[:ACT_BYTES])
 
