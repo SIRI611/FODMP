@@ -251,7 +251,7 @@ def main():
     parser.add_argument("--port", type=int, default=DEFAULT_LISTEN_PORT, help="Listen port for actions (default: 9090)")
     parser.add_argument("--quiet", action="store_true", help="Only print errors")
     parser.add_argument("--no-init-move", type=bool, help="Skip initial absolute move", default=True)
-    parser.add_argument("--telemetry", type=str, choices=["basic", "full"], default="full",
+    parser.add_argument("--telemetry", type=str, choices=["basic", "full"], default="basic",
                         help="Telemetry packet: 'basic'(7d) or 'full'(27d)")
     parser.add_argument("--receive-action", type=bool, default=False,
                         help="Receive action commands (default: False)")

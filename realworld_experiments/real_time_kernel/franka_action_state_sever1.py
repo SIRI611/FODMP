@@ -196,7 +196,7 @@ def main():
     ap.add_argument("--state-dst-ip", type=str, default="127.0.0.1", help="Where to send telemetry (your PC IP)")
     ap.add_argument("--state-dst-port", type=int, default=9091, help="UDP port for telemetry")
     ap.add_argument("--telemetry", choices=["basic", "full"], default="full")
-    ap.add_argument("--state-rate", type=float, default=30.0, help="Telemetry rate Hz")
+    ap.add_argument("--state_rate", type=float, default=30.0, help="Telemetry rate Hz")
     args = ap.parse_args()
 
     cfg = TelemetryConfig(mode=args.telemetry, rate_hz=args.state_rate)
