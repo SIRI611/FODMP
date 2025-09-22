@@ -1,0 +1,120 @@
+# Movement Primitive Diffusion Configuration for MetaWorld Position Control
+# This configuration file defines the training setup for MPD on MetaWorld environments
+
+# Environment configuration
+env:
+  _target_: metaworld.envs.ml1.ML1Env
+  env_name: "reach-v1"
+  time_limit: 500
+  render_mode: "rgb_array"
+  camera_name: "corner"
+  image_size: [224, 224]
+
+# Agent configuration for Movement Primitive Diffusion
+agent:
+  _target_: movement_primitive_diffusion.agents.parameter_space_diffusion_agent.ParameterSpaceDiffusionAgent
+  
+  # Model configuration
+  model_config:
+    _target_: movement_primitive_diffusion.models.diffusion_model.DiffusionModel
+    inner_model_config:
+      _target_: movement_primitive_diffusion.models.transformer_model.TransformerModel
+      input_dim: 128  # Encoded observation dimension
+      output_dim: 7   # Movement primitive dimension
+      hidden_dim: 256
+      num_layers: 6
+      num_heads: 8
+      dropout: 0.1
+    scaling_config:
+      _target_: movement_primitive_diffusion.models.scaling.IdentityScaling
+  
+  # Encoder configuration
+  encoder_config:
+    _target_: movement_primitive_diffusion.encoders.state_encoder.StateEncoder
+    input_dim: 39  # MetaWorld observation dimension
+    output_dim: 128
+    hidden_dims: [256, 256]
+    activation: "relu"
+    dropout: 0.1
+  
+  # Optimizer configuration
+  optimizer_config:
+    _target_: torch.optim.AdamW
+    lr: 1e-4
+    weight_decay: 1e-5
+  
+  # Learning rate scheduler
+  lr_scheduler_config:
+    _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+    T_max: 100
+  
+  # Noise scheduler for diffusion
+  noise_scheduler_config:
+    _target_: movement_primitive_diffusion.noise_schedulers.discrete_time_noise_scheduler.DiscreteTimeNoiseScheduler
+    num_train_timesteps: 1000
+    beta_start: 0.0001
+    beta_end: 0.02
+    beta_schedule: "linear"
+    prediction_type: "epsilon"
+  
+  # Process batch configuration
+  process_batch_config:
+    _target_: movement_primitive_diffusion.process_batch.mpd_process_batch.MPDProcessBatch
+    parameter_shape: [7]  # Movement primitive shape
+    normalize_observations: true
+    normalize_actions: true
+  
+  # EMA configuration
+  ema_config:
+    _target_: movement_primitive_diffusion.utils.ema.EMA
+    decay: 0.999
+  
+  # Agent parameters
+  t_obs: 2
+  predict_past: false
+  use_ema: true
+  device: "cuda"
+  num_inference_steps: 50
+
+# Dataset configuration
+dataset:
+  _target_: FODMP.datasets.metaworld_dataset.MetaWorldDataset
+  dataset_path: null  # Will be set by command line argument
+  t_obs: 2
+  t_act: 4
+  normalize_observations: true
+  normalize_actions: true
+  add_noise: false
+  noise_std: 0.01
+  position_control: true
+  movement_primitive_dim: 7
+
+# Training parameters
+t_act: 4
+t_obs: 2
+predict_past: false
+num_upload_successful_videos: 5
+num_upload_failed_videos: 5
+show_images: false
+
+# Movement Primitive Diffusion specific parameters
+movement_primitive_dim: 7
+position_control: true
+
+# Training hyperparameters
+num_epochs: 100
+batch_size: 32
+learning_rate: 1e-4
+save_checkpoint_every: 10
+eval_every: 5
+test_every: 20
+num_test_trajectories: 10
+
+# Device configuration
+device: "cuda"
+
+# Checkpoint directory
+checkpoint_dir: "./checkpoints"
+
+# Dataset path (will be overridden by command line)
+dataset_path: null
