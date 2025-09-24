@@ -10,7 +10,7 @@ Usage:
 """
 
 import argparse
-import gym
+import gymnasium as gym
 import numpy as np
 import h5py
 import json
