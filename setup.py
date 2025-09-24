@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="fodmp",
     version="0.0.1",
-    author="Xirui Shi",
+    author="Xirui Dalen Shi",
     packages=["fodmp"],
     install_requires=[
         "torch",
