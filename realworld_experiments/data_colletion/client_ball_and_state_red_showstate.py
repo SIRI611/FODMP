@@ -341,7 +341,7 @@ def main():
 
     # Dataset logging
     ap.add_argument("--log", action="store_true", help="Enable CSV logging")
-    ap.add_argument("--csv", default="dataset.csv", help="CSV output file")
+    ap.add_argument("--csv", default="./data_realworld/reach/traj50.csv", help="CSV output file")
 
     # UI
     ap.add_argument("--show", action="store_true", help="Display window with overlays")

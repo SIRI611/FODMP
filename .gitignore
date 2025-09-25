@@ -210,3 +210,4 @@ __marimo__/
 *.csv
 *.npz
 *.h5
+*./data/*

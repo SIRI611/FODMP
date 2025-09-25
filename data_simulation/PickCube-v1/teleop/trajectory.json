@@ -1,0 +1,130 @@
+{
+  "env_info": {
+    "env_id": "PickCube-v1",
+    "env_kwargs": {
+      "obs_mode": "none",
+      "control_mode": "pd_joint_pos",
+      "render_mode": "rgb_array",
+      "reward_mode": "sparse"
+    },
+    "max_episode_steps": 50
+  },
+  "commit_info": {
+    "commit_id": "ecc579b7567c31bb3d7176539d90e86ae49296be",
+    "branch": "new-object-building-api"
+  },
+  "episodes": [
+    {
+      "episode_id": 0,
+      "episode_seed": 0,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 105,
+      "reset_kwargs": {
+        "seed": 0,
+        "options": {}
+      },
+      "success": true
+    },
+    {
+      "episode_id": 1,
+      "episode_seed": 1,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 112,
+      "reset_kwargs": {
+        "seed": 1,
+        "options": {}
+      },
+      "success": true
+    },
+    {
+      "episode_id": 2,
+      "episode_seed": 2,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 82,
+      "reset_kwargs": {
+        "seed": 2,
+        "options": {}
+      },
+      "success": true
+    },
+    {
+      "episode_id": 3,
+      "episode_seed": 3,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 105,
+      "reset_kwargs": {
+        "seed": 3,
+        "options": {}
+      },
+      "success": true
+    },
+    {
+      "episode_id": 4,
+      "episode_seed": 4,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 132,
+      "reset_kwargs": {
+        "seed": 4,
+        "options": {}
+      },
+      "success": true
+    },
+    {
+      "episode_id": 5,
+      "episode_seed": 5,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 119,
+      "reset_kwargs": {
+        "seed": 5,
+        "options": {}
+      },
+      "success": true
+    },
+    {
+      "episode_id": 6,
+      "episode_seed": 6,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 106,
+      "reset_kwargs": {
+        "seed": 6,
+        "options": {}
+      },
+      "success": true
+    },
+    {
+      "episode_id": 7,
+      "episode_seed": 7,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 114,
+      "reset_kwargs": {
+        "seed": 7,
+        "options": {}
+      },
+      "success": true
+    },
+    {
+      "episode_id": 8,
+      "episode_seed": 8,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 82,
+      "reset_kwargs": {
+        "seed": 8,
+        "options": {}
+      },
+      "success": true
+    },
+    {
+      "episode_id": 9,
+      "episode_seed": 9,
+      "control_mode": "pd_joint_pos",
+      "elapsed_steps": 101,
+      "reset_kwargs": {
+        "seed": 9,
+        "options": {}
+      },
+      "success": true
+    }
+  ],
+  "source_type": "teleoperation",
+  "source_desc": "teleoperation via the click+drag system"
+}

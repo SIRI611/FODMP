@@ -23,8 +23,8 @@ import torch
 
 # ManiSkills imports
 import mani_skill
-from mani_skill.envs.sapien_env import SapienEnv
-from mani_skill.utils.wrappers import RecordEpisode
+# from mani_skill.envs.sapien_env import SapienEnv
+# from mani_skill.utils.wrappers import RecordEpisode
 
 
 class ManiSkillsDataGenerator:
@@ -41,7 +41,7 @@ class ManiSkillsDataGenerator:
         env_name: str,
         num_demos: int = 100,
         max_episode_steps: int = 200,
-        obs_mode: str = "state",
+        obs_mode: str = "rgb",
         render_mode: str = "rgb_array",
         camera_name: str = "front",
         image_size: tuple = (224, 224),
@@ -99,12 +99,12 @@ class ManiSkillsDataGenerator:
             env = gym.make(
                 self.env_name,
                 obs_mode=self.obs_mode,
-                render_mode=self.render_mode,
-                camera_cfgs={
-                    "width": self.image_size[0],
-                    "height": self.image_size[1],
-                    "camera_name": self.camera_name
-                }
+                render_mode=self.render_mode
+                # camera_cfgs={
+                #     "width": self.image_size[0],
+                #     "height": self.image_size[1],
+                #     "camera_name": self.camera_name
+                # }
             )
             
             # Set max episode steps
@@ -377,7 +377,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate ManiSkills demonstration dataset")
     
     # Environment parameters
-    parser.add_argument("--env_name", type=str, required=True,
+    parser.add_argument("--env_name", type=str, default="PickCube-v1",
                        help="ManiSkills environment name (e.g., PickCube-v1)")
     parser.add_argument("--num_demos", type=int, default=100,
                        help="Number of demonstrations to generate")
@@ -385,7 +385,7 @@ def main():
                        help="Maximum steps per episode")
     
     # Observation parameters
-    parser.add_argument("--obs_mode", type=str, default="state",
+    parser.add_argument("--obs_mode", type=str, default="rgb",
                        choices=["state", "state_dict", "rgb", "depth", "rgb+depth"],
                        help="Observation mode")
     parser.add_argument("--render_mode", type=str, default="rgb_array",
@@ -396,16 +396,16 @@ def main():
                        help="Image size for rendering")
     
     # Generation parameters
-    parser.add_argument("--policy_type", type=str, default="random",
+    parser.add_argument("--policy_type", type=str, default="scripted",
                        choices=["random", "scripted"],
                        help="Type of policy to use")
-    parser.add_argument("--success_rate_threshold", type=float, default=0.0,
+    parser.add_argument("--success_rate_threshold", type=float, default=0.3,
                        help="Minimum success rate threshold")
     parser.add_argument("--max_attempts", type=int, default=None,
                        help="Maximum number of attempts")
     
     # Output parameters
-    parser.add_argument("--output_dir", type=str, default="./data",
+    parser.add_argument("--output_dir", type=str, default="../data",
                        help="Output directory for dataset")
     parser.add_argument("--output_name", type=str, default=None,
                        help="Output filename (default: env_name_demos)")

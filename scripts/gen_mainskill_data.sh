@@ -6,10 +6,10 @@
 # Default parameters
 ENV_NAME="PickCube-v1"
 NUM_DEMOS=100
-OUTPUT_DIR="./data"
+OUTPUT_DIR="../data"
 OBS_MODE="state"
-POLICY_TYPE="random"
-SUCCESS_RATE_THRESHOLD=0.0
+POLICY_TYPE="scripted"
+SUCCESS_RATE_THRESHOLD=0.3
 SEED=42
 
 # Parse command line arguments
@@ -78,7 +78,7 @@ echo "Seed: $SEED"
 echo "=========================================="
 
 # Run the Python script
-python3 gen_maniskills_data.py \
+python3 ./scripts/gen_maniskills_data.py \
     --env_name="$ENV_NAME" \
     --num_demos="$NUM_DEMOS" \
     --output_dir="$OUTPUT_DIR" \
