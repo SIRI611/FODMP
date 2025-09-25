@@ -1,0 +1,55 @@
+# Configuration for Diffusion Policy CNN on MetaWorld environments
+# This configuration file defines all parameters needed to train a diffusion policy
+# using CNN-based observation encoding for MetaWorld robotic manipulation tasks.
+
+defaults:
+  - agent_config: diffusion_policy_unet1d_agent
+  - _self_
+
+# Environment configuration
+env:
+  _target_: metaworld.envs.ALL_V2_ENVIRONMENTS_GOAL_OBSERVABLE
+  env_name: "reach-v2"  # Can be changed to other MetaWorld tasks
+  time_limit: 500  # Maximum episode length
+  
+# Dataset configuration
+dataset:
+  _target_: FODMP.datasets.metaworld_dataset.MetaWorldDataset
+  dataset_path: null  # Will be set via command line
+  t_obs: ${t_obs}
+  t_act: ${t_act}
+  predict_past: ${predict_past}
+  normalize_actions: true
+  normalize_observations: true
+  
+# Training parameters
+t_obs: 2  # Number of observation steps
+t_act: 4  # Number of action steps
+predict_past: false  # Whether to predict past actions
+
+# Training hyperparameters
+num_epochs: 100
+batch_size: 32
+learning_rate: 1.0e-4
+save_checkpoint_every: 10
+eval_every: 5
+test_every: 20
+num_test_trajectories: 10
+
+# Video logging
+num_upload_successful_videos: 5
+num_upload_failed_videos: 5
+show_images: false
+
+# Device configuration
+device: "cuda"  # Will be overridden by command line argument
+
+# Checkpoint directory
+checkpoint_dir: "./checkpoints"
+
+# WandB logging
+use_wandb: false
+wandb_project: "metaworld-dp-cnn"
+wandb_run_name: null
+
+

@@ -83,7 +83,7 @@ def parse_args(args=None):
         "uid",
         type=str,
         nargs="?",
-        default="",
+        default="all",
         help="An environment id (e.g. PickCube-v1) or 'all' for all available demonstrations.",
     )
     parser.add_argument("--quiet", action="store_true", help="Disable verbose output.")
@@ -97,6 +97,7 @@ def parse_args(args=None):
         "-o",
         "--output_dir",
         type=str,
+        default="./data",
         help="The directory to save demonstrations to. The files will then be saved to <output_dir>/<env_type>/<env_id>. By default it is saved to ~/.maniskill/demos or what MS_ASSET_DIR is set to.",
     )
     return parser.parse_args(args)
