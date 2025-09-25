@@ -211,3 +211,5 @@ __marimo__/
 *.npz
 *.h5
 *./data/*
+*data_simulation/
+*data_realworld/
